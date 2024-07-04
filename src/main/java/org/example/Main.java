@@ -1,31 +1,29 @@
 package org.example;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        String inputFile = "C:\\Users\\bob92\\OneDrive\\文件\\queryAssetCode.json";
-        String outputFile = "queryAssetCode.txt";
 
-        MatcherCode matcher = new MatcherCode();
+        File fileReader = new File("C:\\Users\\bob92\\OneDrive\\文件\\queryAssetCode.json");
+        String fileContent = fileReader.bufferFile();
+        String fileWriter = "queryAssetCodeWK2.txt";
 
-        try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
-            String text;
-            while ((text = br.readLine()) != null) {
-                Pattern pattern = Pattern.compile("\\{\\\"kindCode(.*?)\\\"\\}");
-                Matcher regexMatcher = pattern.matcher(text);
+        MatcherCode matcherCode = new MatcherCode(new ArrayList<>());
+        matcherCode.matcherKindCode(fileContent);
 
-                while (regexMatcher.find()) {
-                    matcher.addMatch(regexMatcher.group());
-                }
-            }
+        List<String> matches = matcherCode.getAll();
+        Sort sort = new Sort(matches);
+        sort.sortFile();
+        List<String> sortedMatches = sort.sortFile();
+
+        WriterFile writerFile = new WriterFile(fileWriter);
+        writerFile.setFileWriter(new ArrayList<>(sortedMatches));
+
+        for (String sortedMatch : sortedMatches) {
+            System.out.println(sortedMatch);
         }
-
-        matcher.printMatches();
-        matcher.writeMatches(outputFile);
     }
 }
